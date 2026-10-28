@@ -1,0 +1,500 @@
+{
+  "id": "modly-partllm-extension",
+  "name": "PartLLM",
+  "type": "process",
+  "entry": "processor.py",
+  "version": "0.1.0",
+  "author": "DrHepa",
+  "description": "Segment mesh parts with PartLLM using full-shape or text-guided inference.",
+  "source": "https://github.com/DrHepa/modly-partllm-extension",
+  "nodes": [
+    {
+      "id": "full-shape",
+      "name": "PartLLM Full-Shape Segmentation",
+      "input": "mesh",
+      "output": "mesh",
+      "params_schema": [
+        {
+          "id": "sem_mode",
+          "label": "Sem Mode",
+          "type": "select",
+          "default": "semantic",
+          "options": [
+            {
+              "value": "semantic",
+              "label": "Semantic"
+            },
+            {
+              "value": "nosem",
+              "label": "Nosem"
+            },
+            {
+              "value": "all",
+              "label": "All"
+            }
+          ]
+        },
+        {
+          "id": "prompt_set",
+          "label": "Prompt Set",
+          "type": "select",
+          "default": "all",
+          "options": [
+            {
+              "value": "all",
+              "label": "All"
+            },
+            {
+              "value": "coarse",
+              "label": "Coarse"
+            },
+            {
+              "value": "general",
+              "label": "General"
+            },
+            {
+              "value": "fine",
+              "label": "Fine"
+            }
+          ]
+        },
+        {
+          "id": "num_parts",
+          "label": "Num Parts",
+          "type": "int",
+          "default": 0,
+          "min": 0,
+          "max": 1024,
+          "step": 1
+        },
+        {
+          "id": "prompt_style",
+          "label": "Prompt Style",
+          "type": "select",
+          "default": "current",
+          "options": [
+            {
+              "value": "current",
+              "label": "Current"
+            },
+            {
+              "value": "legacy",
+              "label": "Legacy"
+            }
+          ]
+        },
+        {
+          "id": "primary_output",
+          "label": "Primary Output",
+          "type": "select",
+          "default": "general",
+          "options": [
+            {
+              "value": "general",
+              "label": "General"
+            },
+            {
+              "value": "coarse",
+              "label": "Coarse"
+            },
+            {
+              "value": "fine",
+              "label": "Fine"
+            }
+          ]
+        },
+        {
+          "id": "seed",
+          "label": "Seed",
+          "type": "int",
+          "default": 42,
+          "min": 0,
+          "max": 2147483647,
+          "step": 1
+        },
+        {
+          "id": "sample_seed",
+          "label": "Sample Seed",
+          "type": "int",
+          "default": 42,
+          "min": 0,
+          "max": 2147483647,
+          "step": 1
+        },
+        {
+          "id": "max_new_tokens",
+          "label": "Max New Tokens",
+          "type": "int",
+          "default": 10240,
+          "min": 1,
+          "max": 32768,
+          "step": 1
+        },
+        {
+          "id": "do_sample",
+          "label": "Do Sample",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        },
+        {
+          "id": "temperature",
+          "label": "Temperature",
+          "type": "float",
+          "default": 0.7,
+          "min": 0.001,
+          "max": 10.0,
+          "step": 0.001
+        },
+        {
+          "id": "top_p",
+          "label": "Top P",
+          "type": "float",
+          "default": 0.8,
+          "min": 0.001,
+          "max": 1.0,
+          "step": 0.001
+        },
+        {
+          "id": "top_k",
+          "label": "Top K",
+          "type": "int",
+          "default": 20,
+          "min": 0,
+          "max": 100000,
+          "step": 1
+        },
+        {
+          "id": "auto_add_bg",
+          "label": "Auto Add Bg",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "max_generated_parts",
+          "label": "Max Generated Parts",
+          "type": "int",
+          "default": 64,
+          "min": 0,
+          "max": 1024,
+          "step": 1
+        },
+        {
+          "id": "save_per_part",
+          "label": "Save Per Part",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        },
+        {
+          "id": "postprocess",
+          "label": "Postprocess",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "pp_drop_small",
+          "label": "Pp Drop Small",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "pp_rel_area_threshold",
+          "label": "Pp Rel Area Threshold",
+          "type": "float",
+          "default": 0.001,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.001
+        },
+        {
+          "id": "graph_cut",
+          "label": "Graph Cut",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "apply_z_positive",
+          "label": "Apply Z Positive",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "text-guided",
+      "name": "PartLLM Text-Guided Segmentation",
+      "input": "mesh",
+      "inputs": [
+        "mesh",
+        "text"
+      ],
+      "input_labels": [
+        "Mesh",
+        "Part Names"
+      ],
+      "output": "mesh",
+      "params_schema": [
+        {
+          "id": "part_names",
+          "label": "Part Names",
+          "type": "string",
+          "default": "seat; chair back; leg",
+          "tooltip": "Separate part names with semicolons or newlines. Connected text overrides this field."
+        },
+        {
+          "id": "seed",
+          "label": "Seed",
+          "type": "int",
+          "default": 42,
+          "min": 0,
+          "max": 2147483647,
+          "step": 1
+        },
+        {
+          "id": "sample_seed",
+          "label": "Sample Seed",
+          "type": "int",
+          "default": 42,
+          "min": 0,
+          "max": 2147483647,
+          "step": 1
+        },
+        {
+          "id": "max_new_tokens",
+          "label": "Max New Tokens",
+          "type": "int",
+          "default": 10240,
+          "min": 1,
+          "max": 32768,
+          "step": 1
+        },
+        {
+          "id": "do_sample",
+          "label": "Do Sample",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        },
+        {
+          "id": "temperature",
+          "label": "Temperature",
+          "type": "float",
+          "default": 0.7,
+          "min": 0.001,
+          "max": 10.0,
+          "step": 0.001
+        },
+        {
+          "id": "top_p",
+          "label": "Top P",
+          "type": "float",
+          "default": 0.8,
+          "min": 0.001,
+          "max": 1.0,
+          "step": 0.001
+        },
+        {
+          "id": "top_k",
+          "label": "Top K",
+          "type": "int",
+          "default": 20,
+          "min": 0,
+          "max": 100000,
+          "step": 1
+        },
+        {
+          "id": "auto_add_bg",
+          "label": "Auto Add Bg",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "max_generated_parts",
+          "label": "Max Generated Parts",
+          "type": "int",
+          "default": 64,
+          "min": 0,
+          "max": 1024,
+          "step": 1
+        },
+        {
+          "id": "save_per_part",
+          "label": "Save Per Part",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        },
+        {
+          "id": "postprocess",
+          "label": "Postprocess",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "pp_drop_small",
+          "label": "Pp Drop Small",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "pp_rel_area_threshold",
+          "label": "Pp Rel Area Threshold",
+          "type": "float",
+          "default": 0.001,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.001
+        },
+        {
+          "id": "graph_cut",
+          "label": "Graph Cut",
+          "type": "select",
+          "default": "true",
+          "options": [
+            {
+              "value": "true",
+              "label": "True"
+            },
+            {
+              "value": "false",
+              "label": "False"
+            }
+          ]
+        },
+        {
+          "id": "apply_z_positive",
+          "label": "Apply Z Positive",
+          "type": "select",
+          "default": "false",
+          "options": [
+            {
+              "value": "false",
+              "label": "False"
+            },
+            {
+              "value": "true",
+              "label": "True"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

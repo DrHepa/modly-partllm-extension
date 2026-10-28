@@ -1,0 +1,14 @@
+venv/
+vendor/
+.build/
+.partllm-setup.json
+.partllm-setup.*
+.native-build.json
+.native-build.failed-*.json
+native-diagnostic.json
+venv.incompatible-*/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+dist/
